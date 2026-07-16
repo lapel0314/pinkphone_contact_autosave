@@ -77,6 +77,10 @@ public final class MainActivity extends Activity {
         buttons2.addView(button("오늘 연락처 일괄 저장", v -> saveTodayContacts()));
         root.addView(buttons2);
 
+        LinearLayout buttons3 = row();
+        buttons3.addView(button("서버 전체 연락처 저장", v -> saveAllContacts()));
+        root.addView(buttons3);
+
         status = text("설정 후 로그인해 주세요.", 14, false);
         status.setPadding(0, dp(10), 0, dp(10));
         root.addView(status);
@@ -189,6 +193,17 @@ public final class MainActivity extends Activity {
         runInBackground("오늘 개통 고객 연락처 일괄 저장 중...", () -> {
             ContactBatchRunner.Result result = ContactBatchRunner.run(this);
             mainHandler.post(() -> toast("연락처 저장 " + result.saved + "명, 건너뜀 " + result.skipped + "명"));
+        });
+    }
+
+    private void saveAllContacts() {
+        if (checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestContactsPermission();
+            return;
+        }
+        runInBackground("서버 전체 고객 연락처 저장 중...", () -> {
+            ContactBatchRunner.Result result = ContactBatchRunner.runAll(this);
+            mainHandler.post(() -> toast("전체 저장 " + result.saved + "명, 건너뜀 " + result.skipped + "명"));
         });
     }
 

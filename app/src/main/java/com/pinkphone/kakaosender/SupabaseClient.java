@@ -71,6 +71,27 @@ final class SupabaseClient {
         return fetchCustomersForDate(LocalDate.now());
     }
 
+    List<Customer> fetchAllCustomers() throws Exception {
+        String select = "id,name,phone,memo,join_date,carrier,model,plan,add_service";
+        String basePath = "/rest/v1/customers"
+                + "?select=" + enc(select)
+                + "&is_deleted=eq.false"
+                + "&order=join_date.asc"
+                + "&order=created_at.asc";
+        List<Customer> customers = new ArrayList<>();
+        int offset = 0;
+        int limit = 1000;
+        while (true) {
+            JSONArray array = requestArray("GET", basePath + "&limit=" + limit + "&offset=" + offset, null);
+            for (int i = 0; i < array.length(); i++) {
+                customers.add(new Customer(array.getJSONObject(i)));
+            }
+            if (array.length() < limit) break;
+            offset += limit;
+        }
+        return customers;
+    }
+
     private List<Customer> fetchCustomersForDate(LocalDate targetDate) throws Exception {
         String select = "id,name,phone,memo,join_date,carrier,model,plan,add_service";
         String path = "/rest/v1/customers"

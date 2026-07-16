@@ -11,6 +11,14 @@ final class ContactBatchRunner {
     private ContactBatchRunner() {}
 
     static Result run(Context context) throws Exception {
+        return run(context, false);
+    }
+
+    static Result runAll(Context context) throws Exception {
+        return run(context, true);
+    }
+
+    private static Result run(Context context, boolean allCustomers) throws Exception {
         if (context.checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             throw new IllegalStateException("연락처 권한이 없습니다.");
         }
@@ -29,7 +37,7 @@ final class ContactBatchRunner {
                 .putString("user_id", session.userId)
                 .apply();
 
-        List<Customer> customers = client.fetchContactBatchCustomers();
+        List<Customer> customers = allCustomers ? client.fetchAllCustomers() : client.fetchContactBatchCustomers();
         ContactSaver saver = new ContactSaver(context);
         int saved = 0;
         int skipped = 0;
