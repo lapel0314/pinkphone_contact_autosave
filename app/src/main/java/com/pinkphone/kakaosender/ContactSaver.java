@@ -119,8 +119,10 @@ final class ContactSaver {
     }
 
     private String displayName(Customer customer) {
-        String date = shortDate(customer.joinDate);
-        return date.isEmpty() ? customer.name.trim() : customer.name.trim() + " " + date;
+        return value(customer.name)
+                + "/" + value(shortDate(customer.joinDate))
+                + "/" + value(customer.model)
+                + "/" + value(installment(customer.installment));
     }
 
     private String shortDate(String value) {
@@ -128,6 +130,17 @@ final class ContactSaver {
         String date = value.substring(0, 10);
         if (!date.matches("\\d{4}-\\d{2}-\\d{2}")) return "";
         return date.substring(2, 4) + "." + date.substring(5, 7) + "." + date.substring(8, 10);
+    }
+
+    private String installment(String value) {
+        String trimmed = value == null ? "" : value.trim();
+        if (trimmed.isEmpty()) return "";
+        return trimmed.matches("\\d+") ? trimmed + "개월" : trimmed;
+    }
+
+    private String value(String value) {
+        String trimmed = value == null ? "" : value.trim();
+        return trimmed.isEmpty() ? "-" : trimmed;
     }
 
     private static final class ContactRef {

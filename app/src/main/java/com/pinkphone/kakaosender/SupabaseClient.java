@@ -72,7 +72,7 @@ final class SupabaseClient {
     }
 
     List<Customer> fetchAllCustomers() throws Exception {
-        String select = "id,name,phone,memo,join_date,carrier,model,plan,add_service";
+        String select = customerSelect();
         String basePath = "/rest/v1/customers"
                 + "?select=" + enc(select)
                 + "&is_deleted=eq.false"
@@ -93,7 +93,7 @@ final class SupabaseClient {
     }
 
     private List<Customer> fetchCustomersForDate(LocalDate targetDate) throws Exception {
-        String select = "id,name,phone,memo,join_date,carrier,model,plan,add_service";
+        String select = customerSelect();
         String path = "/rest/v1/customers"
                 + "?select=" + enc(select)
                 + "&is_deleted=eq.false"
@@ -106,6 +106,10 @@ final class SupabaseClient {
             customers.add(new Customer(array.getJSONObject(i)));
         }
         return customers;
+    }
+
+    private String customerSelect() {
+        return "id,name,phone,memo,join_date,carrier,model,plan,add_service,installment";
     }
 
     private JSONObject requestJson(String method, String path, String body, boolean preferMinimal) throws Exception {

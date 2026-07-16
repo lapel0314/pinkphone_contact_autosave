@@ -12,6 +12,7 @@ final class Customer {
     final String model;
     final String plan;
     final String addService;
+    final String installment;
 
     Customer(JSONObject json) {
         id = json.optString("id", "");
@@ -23,6 +24,7 @@ final class Customer {
         model = json.optString("model", "");
         plan = json.optString("plan", "");
         addService = json.optString("add_service", "");
+        installment = json.optString("installment", "");
     }
 
     String stableKey() {
